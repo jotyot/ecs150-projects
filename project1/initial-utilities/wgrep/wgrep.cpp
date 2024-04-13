@@ -29,53 +29,55 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        wgrep(fd, argv[1]);        
+        wgrep(fd, argv[1]);      
     }
     return 0;
 }
 
+// read file and look at buffer
+// iterate through buffer 
+// keep a flag for if you found the string in question
+// look for when the character matches the newline character, store that in linelen
+// while doing this you have a writeout buffer that should end with a newline
+// write writeout buffer up to linelen
+// 
+// repeat, writing over writeout buffer, continuing from where buffer left off
+// 
+// when there is no newline but still stuff to read from buffer:
+// write this stuff into writeout buffer, 
+// get a new buffer, continue, keeping track of how many bytes read
 void wgrep(int fd, char *key) {
     char buffer[4096];
     char writeOut[4096];
     int k = 0;
     int ret;
     string findStr(key);
-        // read file and look at buffer
-        // iterate through buffer 
-        // keep a flag for if you found the string in question
-        // look for when the character matches the newline character, store that in linelen
-        // while doing this you have a writeout buffer that should end with a newline
-        // write writeout buffer up to linelen
-        // 
-        // repeat, writing over writeout buffer, continuing from where buffer left off
-        // 
-        // when there is no newline but still stuff to read from buffer:
-        // write this stuff into writeout buffer, 
-        // get a new buffer, continue, keeping track of how many bytes read
-        while ((ret = read(fd, buffer, 4096)) > 0) {
-            bool newLine = false;
-            for (int j = 0; j < ret; j++) {
-                writeOut[k] = buffer[j];
-                k++;
-                if (buffer[j] == '\n') {
-                    string line(writeOut);
-                    if (line.find(findStr) != string::npos) {
-                        write(1, writeOut, k);
-                    }
-                    memset(writeOut, '\0', sizeof(writeOut));
-                    k = 0;
-                    newLine = true;
-                }
-            }
-            if (!newLine) {
+
+    while ((ret = read(fd, buffer, 4096)) > 0) {
+        bool newLine = false;
+        for (int j = 0; j < ret; j++) {
+            writeOut[k] = buffer[j];
+            k++;
+            if (buffer[j] == '\n') {
                 string line(writeOut);
                 if (line.find(findStr) != string::npos) {
                     write(1, writeOut, k);
                 }
-                memset(writeOut, '\0', sizeof(writeOut));
+                memset(writeOut, '\0', k);
                 k = 0;
+                newLine = true;
             }
         }
-
+        if (!newLine) {
+            string line(writeOut);
+            if (line.find(findStr) != string::npos) {
+                write(1, writeOut, k);
+            }
+            memset(writeOut, '\0', k);
+            k = 0;
+        }
+    }
+    if (fd != STDIN_FILENO) {
         close(fd);
+    }
 }

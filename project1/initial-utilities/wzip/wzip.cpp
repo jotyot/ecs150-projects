@@ -10,10 +10,6 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
-        // uint32_t c = 38;
-        // char k = 'a';
-        // write(STDOUT_FILENO, &c, 4);
-        // write(STDOUT_FILENO, &k, 1);
         cout << "wzip: file1 [file2 ...]" << endl;
         return 1;
     }
