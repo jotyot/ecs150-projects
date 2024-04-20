@@ -21,12 +21,10 @@ struct command
     vector<string> commandArgs;
 };
 
-void interactive();
-void batch(char *file);
+void wish(char *file);
 vector<command> parseCommand(string inputString);
 vector<string> splitAmpersand(string command);
 vector<string> splitSpaces(string command);
-string removeSpaces(string str);
 char **convertStringVector(vector<string> commandArgs);
 bool builtInCommands(command cmd, vector<string> *path);
 
@@ -34,35 +32,52 @@ int main(int argc, char *argv[])
 {
     if (argc == 1)
     {
-        interactive();
+        wish(NULL);
     }
     else if (argc == 2)
     {
-        batch(argv[1]);
+        wish(argv[1]);
     }
     else
     {
-        cout << "Usage: wish [batch-file]" << endl;
+        cerr << "An error has occurred" << endl;
         return 1;
     }
     return 0;
 }
 
-void interactive()
+void wish(char *file)
 {
     vector<string> path = {"/bin"};
-    string inputString;
-    while (true)
+    bool interactive = file == NULL;
+    istream *inputStream;
+    ifstream fileStream(file);
+    if (interactive)
     {
+        inputStream = &cin;
         cout << "wish> ";
-        getline(cin, inputString);
+    }
+    else
+    {
+        inputStream = &fileStream;
+        if (!fileStream.is_open())
+        {
+            cerr << "An error has occurred" << endl;
+            exit(1);
+        }
+    }
+    string inputString;
+    while (getline(*inputStream, inputString))
+    {
         vector<command> commands = parseCommand(inputString);
+        vector<pid_t> pids;
         for (command cmd : commands)
         {
             if (builtInCommands(cmd, &path))
                 continue;
             char **args = convertStringVector(cmd.commandArgs);
             pid_t pid = fork();
+            pids.push_back(pid);
             if (pid == 0)
             {
                 if (!cmd.outFile.empty())
@@ -82,18 +97,28 @@ void interactive()
                 cerr << "An error has occurred" << endl;
                 exit(1);
             }
-            else
-            {
-                wait(NULL);
-            }
+        }
+        if (interactive)
+            cout << "wish> ";
+        for (pid_t pid : pids)
+        {
+            waitpid(pid, NULL, 0);
         }
     }
 }
 
 bool builtInCommands(command cmd, vector<string> *path)
 {
+    if (cmd.commandArgs.empty())
+    {
+        return true;
+    }
     if (cmd.commandArgs[0] == "exit")
     {
+        if (cmd.commandArgs.size() != 1)
+        {
+            cerr << "An error has occurred" << endl;
+        }
         exit(0);
     }
     if (cmd.commandArgs[0] == "cd")
@@ -136,9 +161,20 @@ vector<command> parseCommand(string inputString)
         size_t redirectPos;
         if ((redirectPos = commandString.find(">")) != string::npos)
         {
-            string outFile = commandString.substr(redirectPos + 1);
+            string rhs = commandString.substr(redirectPos + 1);
+            vector<string> outFiles = splitSpaces(rhs);
+            if (outFiles.size() != 1)
+            {
+                cerr << "An error has occurred" << endl;
+                continue;
+            }
+            string outFile = outFiles[0];
             commandString = commandString.substr(0, redirectPos);
-            outFile = removeSpaces(outFile);
+            if (commandString.empty())
+            {
+                cerr << "An error has occurred" << endl;
+                continue;
+            }
             newCommand.outFile = outFile;
         }
         vector<string> commandArgs = splitSpaces(commandString);
@@ -165,29 +201,26 @@ vector<string> splitAmpersand(string command)
 }
 
 // takes a string and splits into seperate strings whenever there is a space
+// no matter how many spaces are between the strings
 vector<string> splitSpaces(string command)
 {
     vector<string> commands;
-    size_t first = 0;
+    size_t pos = 0;
     string token;
-    while ((first = command.find_first_not_of(' ')) != string::npos)
+    while ((pos = command.find(" ")) != string::npos)
     {
-        size_t last = command.find(' ', first);
-        token = command.substr(first, last);
-        commands.push_back(token);
-        command.erase(0, last + 1);
-        if (token == command)
+        token = command.substr(0, pos);
+        if (!token.empty())
         {
-            break;
+            commands.push_back(token);
         }
+        command.erase(0, pos + 1);
+    }
+    if (!command.empty())
+    {
+        commands.push_back(command);
     }
     return commands;
-}
-
-string removeSpaces(string str)
-{
-    str.erase(remove(str.begin(), str.end(), ' '), str.end());
-    return str;
 }
 
 char **convertStringVector(vector<string> commandArgs)
@@ -200,8 +233,4 @@ char **convertStringVector(vector<string> commandArgs)
     }
     args[commandArgs.size()] = NULL;
     return args;
-}
-
-void batch(char *file)
-{
 }

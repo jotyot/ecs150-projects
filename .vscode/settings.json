@@ -8,6 +8,15 @@
     "string_view": "cpp",
     "ostream": "cpp",
     "deque": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "iostream": "cpp",
+    "array": "cpp",
+    "bitset": "cpp",
+    "initializer_list": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "regex": "cpp",
+    "utility": "cpp",
+    "fstream": "cpp"
   }
 }
