@@ -21,19 +21,20 @@ struct command
     vector<string> commandArgs;
 };
 
-int interactive();
+void interactive();
 void batch(char *file);
 vector<command> parseCommand(string inputString);
 vector<string> splitAmpersand(string command);
 vector<string> splitSpaces(string command);
 string removeSpaces(string str);
 char **convertStringVector(vector<string> commandArgs);
+bool builtInCommands(command cmd, vector<string> *path);
 
 int main(int argc, char *argv[])
 {
     if (argc == 1)
     {
-        return interactive();
+        interactive();
     }
     else if (argc == 2)
     {
@@ -47,21 +48,19 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int interactive()
+void interactive()
 {
-    string path = "/bin";
+    vector<string> path = {"/bin"};
     string inputString;
     while (true)
     {
         cout << "wish> ";
         getline(cin, inputString);
-        if (inputString == "exit")
-        {
-            return 0;
-        }
         vector<command> commands = parseCommand(inputString);
         for (command cmd : commands)
         {
+            if (builtInCommands(cmd, &path))
+                continue;
             char **args = convertStringVector(cmd.commandArgs);
             pid_t pid = fork();
             if (pid == 0)
@@ -72,7 +71,14 @@ int interactive()
                     dup2(fd, STDOUT_FILENO);
                     close(fd);
                 }
-                execv((path + "/" + args[0]).c_str(), args);
+                for (const string &pathDir : path)
+                {
+                    const char *pathCommand = (pathDir + "/" + args[0]).c_str();
+                    if (access(pathCommand, X_OK) == 0)
+                    {
+                        execv(pathCommand, args);
+                    };
+                }
                 cerr << "An error has occurred" << endl;
                 exit(1);
             }
@@ -82,8 +88,39 @@ int interactive()
             }
         }
     }
+}
 
-    return 0;
+bool builtInCommands(command cmd, vector<string> *path)
+{
+    if (cmd.commandArgs[0] == "exit")
+    {
+        exit(0);
+    }
+    if (cmd.commandArgs[0] == "cd")
+    {
+        if (cmd.commandArgs.size() != 2)
+        {
+            cerr << "An error has occurred" << endl;
+        }
+        else
+        {
+            if (chdir(cmd.commandArgs[1].c_str()) < 0)
+            {
+                cerr << "An error has occurred" << endl;
+            }
+        }
+        return true;
+    }
+    if (cmd.commandArgs[0] == "path")
+    {
+        path->clear();
+        for (const string &arg : cmd.commandArgs)
+        {
+            path->push_back(arg);
+        }
+        return true;
+    }
+    return false;
 }
 
 // takes a string and parses it into a vector of commands
