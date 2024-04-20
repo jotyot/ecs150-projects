@@ -1,10 +1,13 @@
 {
-    "files.associations": {
-        "*.pl": "prolog",
-        "*.plt": "prolog",
-        "*.tcc": "cpp",
-        "string": "cpp",
-        "unordered_map": "cpp",
-        "string_view": "cpp"
-    }
+  "files.associations": {
+    "*.pl": "prolog",
+    "*.plt": "prolog",
+    "*.tcc": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "string_view": "cpp",
+    "ostream": "cpp",
+    "deque": "cpp",
+    "vector": "cpp"
+  }
 }
