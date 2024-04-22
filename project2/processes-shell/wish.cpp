@@ -25,19 +25,15 @@ void wish(char *file);
 vector<command> parseCommand(string inputString);
 vector<string> splitAmpersand(string command);
 vector<string> splitSpaces(string command);
-char **convertStringVector(vector<string> commandArgs);
+char **convertToChars(vector<string> commandArgs);
 bool builtInCommands(command cmd, vector<string> *path);
 
 int main(int argc, char *argv[])
 {
     if (argc == 1)
-    {
         wish(NULL);
-    }
     else if (argc == 2)
-    {
         wish(argv[1]);
-    }
     else
     {
         cerr << "An error has occurred" << endl;
@@ -49,6 +45,9 @@ int main(int argc, char *argv[])
 void wish(char *file)
 {
     vector<string> path = {"/bin"};
+
+    // if file is NULL, then we are in interactive mode
+    // if interative, read from cin, otherwise from file
     bool interactive = file == NULL;
     istream *inputStream;
     ifstream fileStream(file);
@@ -66,6 +65,8 @@ void wish(char *file)
             exit(1);
         }
     }
+
+    // read input line by line
     string inputString;
     while (getline(*inputStream, inputString))
     {
@@ -73,19 +74,22 @@ void wish(char *file)
         vector<pid_t> pids;
         for (command cmd : commands)
         {
+            // built in command check
             if (builtInCommands(cmd, &path))
                 continue;
-            char **args = convertStringVector(cmd.commandArgs);
+            char **args = convertToChars(cmd.commandArgs);
             pid_t pid = fork();
             pids.push_back(pid);
             if (pid == 0)
             {
+                // redirect output to file if specified
                 if (!cmd.outFile.empty())
                 {
                     int fd = open(cmd.outFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
                     dup2(fd, STDOUT_FILENO);
                     close(fd);
                 }
+                // try paths until one executes
                 for (const string &pathDir : path)
                 {
                     const char *pathCommand = (pathDir + "/" + args[0]).c_str();
@@ -98,15 +102,19 @@ void wish(char *file)
                 exit(1);
             }
         }
-        if (interactive)
-            cout << "wish> ";
+        // wait for all concurrent processes to finish before reading next line
         for (pid_t pid : pids)
         {
             waitpid(pid, NULL, 0);
         }
+
+        if (interactive)
+            cout << "wish> ";
     }
 }
 
+// tests for empty command, exit, cd, and path commands
+// returns true if no need to fork
 bool builtInCommands(command cmd, vector<string> *path)
 {
     if (cmd.commandArgs.empty())
@@ -158,6 +166,8 @@ vector<command> parseCommand(string inputString)
     for (string commandString : commandStrings)
     {
         command newCommand;
+
+        // check for output redirection, set output file member if found
         size_t redirectPos;
         if ((redirectPos = commandString.find(">")) != string::npos)
         {
@@ -223,7 +233,8 @@ vector<string> splitSpaces(string command)
     return commands;
 }
 
-char **convertStringVector(vector<string> commandArgs)
+// takes a vector of strings and converts it to a char** for execv
+char **convertToChars(vector<string> commandArgs)
 {
     char **args = new char *[commandArgs.size() + 1];
     for (size_t i = 0; i < commandArgs.size(); i++)
