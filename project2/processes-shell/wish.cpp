@@ -118,29 +118,24 @@ void wish(char *file)
 bool builtInCommands(command cmd, vector<string> *path)
 {
     if (cmd.commandArgs.empty())
-    {
         return true;
-    }
+
     if (cmd.commandArgs[0] == "exit")
     {
         if (cmd.commandArgs.size() != 1)
-        {
             cerr << "An error has occurred" << endl;
-        }
+
         exit(0);
     }
     if (cmd.commandArgs[0] == "cd")
     {
         if (cmd.commandArgs.size() != 2)
-        {
             cerr << "An error has occurred" << endl;
-        }
+
         else
         {
             if (chdir(cmd.commandArgs[1].c_str()) < 0)
-            {
                 cerr << "An error has occurred" << endl;
-            }
         }
         return true;
     }
@@ -220,16 +215,14 @@ vector<string> splitSpaces(string command)
     while ((pos = command.find(" ")) != string::npos)
     {
         token = command.substr(0, pos);
+
         if (!token.empty())
-        {
             commands.push_back(token);
-        }
+
         command.erase(0, pos + 1);
     }
     if (!command.empty())
-    {
         commands.push_back(command);
-    }
     return commands;
 }
 
