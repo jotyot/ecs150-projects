@@ -157,10 +157,9 @@ int main(int argc, char *argv[]) {
 
   while (true) {
     MySocket *client = server->accept();
-    dthread_mutex_lock(&request_mutex);
+    cout << "accepted connection" << endl;
     request_queue.push_back(client);
     dthread_cond_signal(&request_cond);
-    dthread_mutex_unlock(&request_mutex);
   }
 }
 

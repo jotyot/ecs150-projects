@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pthread.h>
 #include <assert.h>
+#include <vector>
 
 #include "HttpClient.h"
 
@@ -8,14 +9,16 @@ using namespace std;
 
 void concurrent_test(int n);
 void consequetive_test();
+void slow_test();
 void *handle_thread(void *arg);
 
 int PORT = 8080;
 
 int main(int argc, char *argv[]) {
-  //consequetive_test();
-  concurrent_test(4);
-  
+  // consequetive_test();
+  // concurrent_test(10);
+  slow_test();
+
   return 0;
 }
 
@@ -31,13 +34,14 @@ void *handle_thread(void *arg) {
 
 void concurrent_test(int n) {
   cout << n << " threads test" << endl;
+  vector<pthread_t> threads;
   for (int i = 0; i < n; i++) {
     pthread_t thread1;
-    pthread_t thread2;
-    pthread_create(&thread1, NULL, handle_thread, (void *) "/bootstrap.html");
-    pthread_create(&thread2, NULL, handle_thread, (void *) "/hello_world.html");
-    pthread_join(thread1, NULL);
-    pthread_join(thread2, NULL);
+    pthread_create(&thread1, NULL, handle_thread, (void *) "/hello_world.html");
+    threads.push_back(thread1);
+  }
+  for (size_t i = 0; i < threads.size(); i++) {
+    pthread_join(threads[i], NULL);
   }
   cout << "passed" << endl;
 }
@@ -49,6 +53,27 @@ void consequetive_test() {
     HTTPResponse *response = client.get("/hello_world.html");
     assert(response->status() == 200);
     delete response;
+  }
+  cout << "passed" << endl;
+}
+
+void slow_test() {
+  cout << "slow test" << endl;
+  vector<pthread_t> threads;
+  for (int i = 0; i < 4; i++) {
+    pthread_t thread1;
+    pthread_create(&thread1, NULL, handle_thread, (void *) "/slow.html");
+    cout << "thread created" << endl;
+    threads.push_back(thread1);
+  }
+  for (int i = 0; i < 4; i++) {
+    pthread_t thread1;
+    pthread_create(&thread1, NULL, handle_thread, (void *) "/hello_world.html");
+    cout << "thread created" << endl;
+    threads.push_back(thread1);
+  }
+  for (size_t i = 0; i < threads.size(); i++) {
+    pthread_join(threads[i], NULL);
   }
   cout << "passed" << endl;
 }

@@ -17,6 +17,10 @@
     "span": "cpp",
     "regex": "cpp",
     "utility": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "memory": "cpp",
+    "istream": "cpp",
+    "functional": "cpp",
+    "tuple": "cpp"
   }
 }
