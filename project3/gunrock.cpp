@@ -31,6 +31,12 @@ string LOGFILE = "/dev/null";
 
 vector<HttpService *> services;
 
+deque<MySocket *> request_queue;
+pthread_mutex_t request_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t request_cond = PTHREAD_COND_INITIALIZER;
+
+void *handle_thread(void *arg);
+
 HttpService *find_service(HTTPRequest *request) {
    // find a service that is registered for this path prefix
   for (unsigned int idx = 0; idx < services.size(); idx++) {
@@ -139,16 +145,35 @@ int main(int argc, char *argv[]) {
 
   sync_print("init", "");
   MyServerSocket *server = new MyServerSocket(PORT);
-  MySocket *client;
 
   // The order that you push services dictates the search order
   // for path prefix matching
   services.push_back(new FileService(BASEDIR));
-  
-  while(true) {
-    sync_print("waiting_to_accept", "");
-    client = server->accept();
-    sync_print("client_accepted", "");
+
+  for (int idx = 0; idx < THREAD_POOL_SIZE; idx++) {
+    pthread_t tid;
+    dthread_create(&tid, NULL, handle_thread, NULL);
+  }
+
+  while (true) {
+    MySocket *client = server->accept();
+    dthread_mutex_lock(&request_mutex);
+    request_queue.push_back(client);
+    dthread_cond_signal(&request_cond);
+    dthread_mutex_unlock(&request_mutex);
+  }
+}
+
+void *handle_thread(void *arg) {
+  while (true) {
+    dthread_mutex_lock(&request_mutex);
+    while (request_queue.empty()) {
+      dthread_cond_wait(&request_cond, &request_mutex);
+    }
+    MySocket *client = request_queue.front();
+    request_queue.pop_front();
+    dthread_mutex_unlock(&request_mutex);
     handle_request(client);
   }
+  return NULL;
 }
