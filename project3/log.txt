@@ -1,129 +1,338 @@
 init thread: 0 
 my_start_routine_enter thread: 1  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 1  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 1  mutex: 0x56213c8cc900 cond: 0
+dthread_mutex_lock_enter thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 1  mutex: 0x55d06596f900 cond: 0
 my_start_routine_enter thread: 2  mutex: 0 cond: 0
 my_start_routine_enter thread: 3  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 1  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_return thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_enter thread: 3  mutex: 0x56213c8cc900 cond: 0
+dthread_mutex_lock_enter thread: 3  mutex: 0x55d06596f900 cond: 0
 my_start_routine_enter thread: 4  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 4  mutex: 0x56213c8cc900 cond: 0
+dthread_mutex_lock_enter thread: 4  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 2  mutex: 0x55d06596f900 cond: 0
 my_start_routine_enter thread: 5  mutex: 0 cond: 0
-dthread_cond_wait_enter thread: 2  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
+dthread_mutex_lock_enter thread: 5  mutex: 0x55d06596f900 cond: 0
 my_start_routine_enter thread: 6  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 6  mutex: 0x56213c8cc900 cond: 0
+dthread_mutex_lock_enter thread: 6  mutex: 0x55d06596f900 cond: 0
 my_start_routine_enter thread: 7  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 7  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_enter thread: 5  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 3  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 3  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
 my_start_routine_enter thread: 8  mutex: 0 cond: 0
-dthread_mutex_lock_enter thread: 8  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 4  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 4  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_return thread: 6  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 6  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_return thread: 7  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 7  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_return thread: 5  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 5  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_return thread: 8  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 8  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_wait_return thread: 1  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 1  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_unlock_return thread: 1  mutex: 0x56213c8cc900 cond: 0
-read_request_enter thread: 1 client: 0x56213e7b0e90
-read_request_return thread: 1 client: 0x56213e7b0e90
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_wait_return thread: 2  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_mutex_unlock_return thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_return thread: 3  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 3  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_unlock_return thread: 3  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-read_request_enter thread: 2 client: 0x56213e7b1580
-read_request_enter thread: 3 client: 0x56213e7b15a0
-dthread_cond_wait_return thread: 4  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 4  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_unlock_return thread: 4  mutex: 0x56213c8cc900 cond: 0
-read_request_enter thread: 4 client: 0x56213e7b15c0
-read_request_return thread: 2 client: 0x56213e7b1580
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-dthread_cond_wait_return thread: 6  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 6  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_unlock_return thread: 6  mutex: 0x56213c8cc900 cond: 0
-read_request_enter thread: 6 client: 0x56213e7b15e0
-dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x56213c8cc940
-read_request_return thread: 6 client: 0x56213e7b15e0
-dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x56213c8cc940
-write_response thread: 2  RESPONSE 200 client: 0x56213e7b1580
-dthread_cond_wait_return thread: 7  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_unlock_enter thread: 7  mutex: 0x56213c8cc900 cond: 0
-read_request_return thread: 4 client: 0x56213e7b15c0
-read_request_return thread: 3 client: 0x56213e7b15a0
-dthread_cond_wait_return thread: 5  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-write_response thread: 3  RESPONSE 200 client: 0x56213e7b15a0
-dthread_mutex_unlock_return thread: 7  mutex: 0x56213c8cc900 cond: 0
-read_request_enter thread: 7 client: 0x56213e7b1600
-close_connection thread: 2  client: 0x56213e7b1580
-dthread_mutex_unlock_enter thread: 5  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_enter thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_unlock_return thread: 5  mutex: 0x56213c8cc900 cond: 0
-close_connection thread: 3  client: 0x56213e7b15a0
-dthread_mutex_lock_return thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_enter thread: 3  mutex: 0x56213c8cc900 cond: 0
-read_request_enter thread: 5 client: 0x56213e7b1620
-dthread_mutex_unlock_enter thread: 2  mutex: 0x56213c8cc900 cond: 0
-read_request_return thread: 5 client: 0x56213e7b1620
-read_request_return thread: 7 client: 0x56213e7b1600
-dthread_mutex_unlock_return thread: 2  mutex: 0x56213c8cc900 cond: 0
-write_response thread: 7  RESPONSE 200 client: 0x56213e7b1600
-write_response thread: 5  RESPONSE 200 client: 0x56213e7b1620
-dthread_cond_wait_return thread: 8  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_cond_wait_enter thread: 8  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-close_connection thread: 7  client: 0x56213e7b1600
-dthread_mutex_lock_return thread: 3  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 3  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_enter thread: 7  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 7  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 7  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-read_request_enter thread: 2 client: 0x56213e7b1640
-close_connection thread: 5  client: 0x56213e7b1620
-read_request_return thread: 2 client: 0x56213e7b1640
-dthread_mutex_lock_enter thread: 5  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 5  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 5  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-write_response thread: 1  RESPONSE 200 client: 0x56213e7b0e90
-close_connection thread: 1  client: 0x56213e7b0e90
-dthread_mutex_lock_enter thread: 1  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 1  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 1  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-write_response thread: 6  RESPONSE 200 client: 0x56213e7b15e0
-write_response thread: 4  RESPONSE 200 client: 0x56213e7b15c0
-close_connection thread: 6  client: 0x56213e7b15e0
-close_connection thread: 4  client: 0x56213e7b15c0
-dthread_mutex_lock_enter thread: 6  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 6  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 6  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-dthread_mutex_lock_enter thread: 4  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 4  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 4  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
-write_response thread: 2  RESPONSE 200 client: 0x56213e7b1640
-close_connection thread: 2  client: 0x56213e7b1640
-dthread_mutex_lock_enter thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_mutex_lock_return thread: 2  mutex: 0x56213c8cc900 cond: 0
-dthread_cond_wait_enter thread: 2  mutex: 0x56213c8cc900 cond: 0x56213c8cc940
+dthread_mutex_lock_enter thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 1  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_enter thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 3  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 4  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 2  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 5  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 6  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 8  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_return thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 7  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_return thread: 1  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 1  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 1  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 1  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 1 client: 0x55d0663c4e90
+read_request_return thread: 1 client: 0x55d0663c4e90
+dthread_cond_wait_return thread: 3  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 3  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 3  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 3  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 3 client: 0x55d0663c5170
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+read_request_return thread: 3 client: 0x55d0663c5170
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_return thread: 4  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 4  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 4  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 4  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 4 client: 0x55d0663c5190
+read_request_return thread: 4 client: 0x55d0663c5190
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_cond_wait_return thread: 2  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 2  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 2  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 2  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+read_request_enter thread: 2 client: 0x55d0663c51b0
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+read_request_return thread: 2 client: 0x55d0663c51b0
+dthread_cond_wait_return thread: 5  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_cond_signal_enter thread: 5  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_return thread: 5  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_cond_wait_return thread: 6  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 6  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 6  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_return thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 5 client: 0x55d0663c51d0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_return thread: 8  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 8  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 8  mutex: 0 cond: 0x55d06596f980
+read_request_return thread: 5 client: 0x55d0663c51d0
+read_request_enter thread: 6 client: 0x55d0663c51f0
+read_request_return thread: 6 client: 0x55d0663c51f0
+dthread_mutex_unlock_enter thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 8  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 8 client: 0x55d0663c5210
+read_request_return thread: 8 client: 0x55d0663c5210
+dthread_cond_wait_return thread: 7  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_cond_signal_enter thread: 7  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 7  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 7  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 7 client: 0x55d0663c5230
+read_request_return thread: 7 client: 0x55d0663c5230
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+dthread_mutex_lock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+client_accepted thread: 0 
+dthread_cond_signal_enter thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_cond_signal_return thread: 0  mutex: 0 cond: 0x55d06596f940
+dthread_mutex_unlock_enter thread: 0  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 0  mutex: 0x55d06596f900 cond: 0
+waiting_to_accept thread: 0 
+write_response thread: 1  RESPONSE 200 client: 0x55d0663c4e90
+write_response thread: 3  RESPONSE 200 client: 0x55d0663c5170
+write_response thread: 4  RESPONSE 200 client: 0x55d0663c5190
+close_connection thread: 1  client: 0x55d0663c4e90
+close_connection thread: 3  client: 0x55d0663c5170
+close_connection thread: 4  client: 0x55d0663c5190
+dthread_mutex_lock_enter thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_enter thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_enter thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 3  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 3  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 1  mutex: 0x55d06596f900 cond: 0
+write_response thread: 2  RESPONSE 200 client: 0x55d0663c51b0
+dthread_cond_signal_enter thread: 1  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 1  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 1  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 1 client: 0x55d0663c5270
+read_request_enter thread: 3 client: 0x55d0663c5250
+dthread_mutex_lock_return thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 4  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 4  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 4  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 4 client: 0x55d0663c5290
+read_request_return thread: 4 client: 0x55d0663c5290
+close_connection thread: 2  client: 0x55d0663c51b0
+read_request_return thread: 1 client: 0x55d0663c5270
+dthread_mutex_lock_enter thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 2  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 2  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 2  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 2 client: 0x55d0663c52b0
+read_request_return thread: 2 client: 0x55d0663c52b0
+read_request_return thread: 3 client: 0x55d0663c5250
+write_response thread: 5  RESPONSE 200 client: 0x55d0663c51d0
+write_response thread: 6  RESPONSE 200 client: 0x55d0663c51f0
+close_connection thread: 5  client: 0x55d0663c51d0
+dthread_mutex_lock_enter thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 5  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 5  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 5  mutex: 0x55d06596f900 cond: 0
+close_connection thread: 6  client: 0x55d0663c51f0
+dthread_mutex_lock_enter thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 6  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 6  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 6  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 6 client: 0x55d0663c52f0
+write_response thread: 8  RESPONSE 200 client: 0x55d0663c5210
+read_request_return thread: 6 client: 0x55d0663c52f0
+dthread_mutex_unlock_return thread: 5  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 5 client: 0x55d0663c52d0
+close_connection thread: 8  client: 0x55d0663c5210
+write_response thread: 7  RESPONSE 200 client: 0x55d0663c5230
+read_request_return thread: 5 client: 0x55d0663c52d0
+dthread_mutex_lock_enter thread: 8  mutex: 0x55d06596f900 cond: 0
+close_connection thread: 7  client: 0x55d0663c5230
+dthread_mutex_lock_return thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_enter thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_cond_signal_enter thread: 8  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 8  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 8  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 8 client: 0x55d0663c5310
+dthread_mutex_lock_return thread: 7  mutex: 0x55d06596f900 cond: 0
+read_request_return thread: 8 client: 0x55d0663c5310
+dthread_cond_signal_enter thread: 7  mutex: 0 cond: 0x55d06596f980
+dthread_cond_signal_return thread: 7  mutex: 0 cond: 0x55d06596f980
+dthread_mutex_unlock_enter thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_unlock_return thread: 7  mutex: 0x55d06596f900 cond: 0
+read_request_enter thread: 7 client: 0x55d0663c5330
+read_request_return thread: 7 client: 0x55d0663c5330
+write_response thread: 4  RESPONSE 200 client: 0x55d0663c5290
+write_response thread: 1  RESPONSE 200 client: 0x55d0663c5270
+close_connection thread: 4  client: 0x55d0663c5290
+dthread_mutex_lock_enter thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 4  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 4  mutex: 0x55d06596f900 cond: 0x55d06596f940
+write_response thread: 2  RESPONSE 200 client: 0x55d0663c52b0
+write_response thread: 3  RESPONSE 200 client: 0x55d0663c5250
+close_connection thread: 2  client: 0x55d0663c52b0
+close_connection thread: 1  client: 0x55d0663c5270
+dthread_mutex_lock_enter thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 2  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 2  mutex: 0x55d06596f900 cond: 0x55d06596f940
+dthread_mutex_lock_enter thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 1  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 1  mutex: 0x55d06596f900 cond: 0x55d06596f940
+write_response thread: 6  RESPONSE 200 client: 0x55d0663c52f0
+close_connection thread: 6  client: 0x55d0663c52f0
+dthread_mutex_lock_enter thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 6  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 6  mutex: 0x55d06596f900 cond: 0x55d06596f940
+close_connection thread: 3  client: 0x55d0663c5250
+write_response thread: 5  RESPONSE 200 client: 0x55d0663c52d0
+dthread_mutex_lock_enter thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 3  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 3  mutex: 0x55d06596f900 cond: 0x55d06596f940
+close_connection thread: 5  client: 0x55d0663c52d0
+dthread_mutex_lock_enter thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 5  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 5  mutex: 0x55d06596f900 cond: 0x55d06596f940
+write_response thread: 8  RESPONSE 200 client: 0x55d0663c5310
+write_response thread: 7  RESPONSE 200 client: 0x55d0663c5330
+close_connection thread: 8  client: 0x55d0663c5310
+dthread_mutex_lock_enter thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 8  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 8  mutex: 0x55d06596f900 cond: 0x55d06596f940
+close_connection thread: 7  client: 0x55d0663c5330
+dthread_mutex_lock_enter thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_mutex_lock_return thread: 7  mutex: 0x55d06596f900 cond: 0
+dthread_cond_wait_enter thread: 7  mutex: 0x55d06596f900 cond: 0x55d06596f940

@@ -34,11 +34,11 @@ bool FileService::endswith(string str, string suffix) {
 }
 
 void FileService::get(HTTPRequest *request, HTTPResponse *response) {
-  if (request->getPath() == "/slow.html") {
-    sleep(2);
-    response->setBody("slow");
-    return;
-  }
+  // if (request->getPath() == "/slow.html") {
+  //   sleep(2);
+  //   response->setBody("slow");
+  //   return;
+  // }
 
   string path = this->m_basedir + request->getPath();
   if (path.find("..") != string::npos) {

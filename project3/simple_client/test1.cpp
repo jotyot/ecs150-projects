@@ -16,8 +16,8 @@ int PORT = 8080;
 
 int main(int argc, char *argv[]) {
   // consequetive_test();
-  // concurrent_test(10);
-  slow_test();
+  concurrent_test(16);
+  // slow_test();
 
   return 0;
 }
@@ -37,7 +37,7 @@ void concurrent_test(int n) {
   vector<pthread_t> threads;
   for (int i = 0; i < n; i++) {
     pthread_t thread1;
-    pthread_create(&thread1, NULL, handle_thread, (void *) "/hello_world.html");
+    pthread_create(&thread1, NULL, handle_thread, (void *) "/slow.html");
     threads.push_back(thread1);
   }
   for (size_t i = 0; i < threads.size(); i++) {
@@ -63,13 +63,11 @@ void slow_test() {
   for (int i = 0; i < 4; i++) {
     pthread_t thread1;
     pthread_create(&thread1, NULL, handle_thread, (void *) "/slow.html");
-    cout << "thread created" << endl;
     threads.push_back(thread1);
   }
   for (int i = 0; i < 4; i++) {
     pthread_t thread1;
     pthread_create(&thread1, NULL, handle_thread, (void *) "/hello_world.html");
-    cout << "thread created" << endl;
     threads.push_back(thread1);
   }
   for (size_t i = 0; i < threads.size(); i++) {

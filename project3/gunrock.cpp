@@ -33,7 +33,8 @@ vector<HttpService *> services;
 
 deque<MySocket *> request_queue;
 pthread_mutex_t request_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t request_cond = PTHREAD_COND_INITIALIZER;
+pthread_cond_t has_requests = PTHREAD_COND_INITIALIZER;
+pthread_cond_t has_room = PTHREAD_COND_INITIALIZER;
 
 void *handle_thread(void *arg);
 
@@ -156,10 +157,16 @@ int main(int argc, char *argv[]) {
   }
 
   while (true) {
+    sync_print("waiting_to_accept", "");
     MySocket *client = server->accept();
-    cout << "accepted connection" << endl;
+    dthread_mutex_lock(&request_mutex);
+    while((int) request_queue.size() >= BUFFER_SIZE) {
+      dthread_cond_wait(&has_room, &request_mutex);
+    }
+    sync_print("client_accepted", "");
     request_queue.push_back(client);
-    dthread_cond_signal(&request_cond);
+    dthread_cond_signal(&has_requests);
+    dthread_mutex_unlock(&request_mutex);
   }
 }
 
@@ -167,10 +174,11 @@ void *handle_thread(void *arg) {
   while (true) {
     dthread_mutex_lock(&request_mutex);
     while (request_queue.empty()) {
-      dthread_cond_wait(&request_cond, &request_mutex);
+      dthread_cond_wait(&has_requests, &request_mutex);
     }
     MySocket *client = request_queue.front();
     request_queue.pop_front();
+    dthread_cond_signal(&has_room);
     dthread_mutex_unlock(&request_mutex);
     handle_request(client);
   }
