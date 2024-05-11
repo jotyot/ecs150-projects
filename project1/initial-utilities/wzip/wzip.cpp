@@ -28,10 +28,6 @@ int main(int argc, char *argv[]) {
         char buffer[4096];
         int ret;
 
-        // iterate through every char in buffer
-        // have current char k
-        // keep count c of how many many in a row
-        // when new char != k, write the c, then the char k
         while ((ret = read(fd, buffer, 4096)) > 0) {
             if (start) {
                 k = buffer[0];  
