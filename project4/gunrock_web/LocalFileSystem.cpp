@@ -21,6 +21,18 @@ void LocalFileSystem::readSuperBlock(super_t *super) {
 }
 
 int LocalFileSystem::lookup(int parentInodeNumber, string name) {
+  inode_t inode;
+  int ret = stat(parentInodeNumber, &inode);
+  if (ret != 0) {
+    return ret;
+  }
+  dir_ent_t entries[inode.size / sizeof(dir_ent_t)];
+  read(parentInodeNumber, &entries, inode.size);
+  for (dir_ent_t entry : entries) {
+    if (strcmp(entry.name, name.c_str()) == 0) {
+      return entry.inum;
+    }
+  }
   return 0;
 }
 
@@ -73,4 +85,20 @@ int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
 
 int LocalFileSystem::unlink(int parentInodeNumber, string name) {
   return 0;
+}
+
+void LocalFileSystem::readInodeBitmap(super_t *super, unsigned char *inodeBitmap) {
+  for (int i = 0; i < super->inode_bitmap_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    disk->readBlock(super->inode_bitmap_addr + i, buffer);
+    memcpy(inodeBitmap + i * UFS_BLOCK_SIZE, buffer, UFS_BLOCK_SIZE);
+  }
+}
+
+void LocalFileSystem::readDataBitmap(super_t *super, unsigned char *dataBitmap) {
+  for (int i = 0; i < super->data_bitmap_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    disk->readBlock(super->data_bitmap_addr + i, buffer);
+    memcpy(dataBitmap + i * UFS_BLOCK_SIZE, buffer, UFS_BLOCK_SIZE);
+  }
 }
