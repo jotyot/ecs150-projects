@@ -26,6 +26,9 @@ int LocalFileSystem::lookup(int parentInodeNumber, string name) {
   if (ret != 0) {
     return ret;
   }
+  if (inode.type != UFS_DIRECTORY) {
+    return EINVALIDINODE;
+  }
   dir_ent_t entries[inode.size / sizeof(dir_ent_t)];
   read(parentInodeNumber, &entries, inode.size);
   for (dir_ent_t entry : entries) {
@@ -33,7 +36,7 @@ int LocalFileSystem::lookup(int parentInodeNumber, string name) {
       return entry.inum;
     }
   }
-  return 0;
+  return ENOTFOUND;
 }
 
 int LocalFileSystem::stat(int inodeNumber, inode_t *inode) {
@@ -80,7 +83,31 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
 }
 
 int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
-  return 0;
+  inode_t inode;
+  int ret = stat(inodeNumber, &inode);
+  if (ret != 0) {
+    return ret;
+  }
+  if (size < 0 || size > MAX_FILE_SIZE) {
+    return EINVALIDSIZE;
+  }
+  if (inode.type != UFS_REGULAR_FILE) {
+    return EINVALIDTYPE;
+  }
+
+  int bytesWritten = 0;
+  int blockNumber = 0;
+  char *blockBuffer = new char[UFS_BLOCK_SIZE];
+
+  while (bytesWritten < size) {
+    int bytesToWrite = min(size - bytesWritten, UFS_BLOCK_SIZE);
+    memcpy(blockBuffer, (char *)buffer + bytesWritten, bytesToWrite);
+    disk->writeBlock(inode.direct[blockNumber], blockBuffer);
+    bytesWritten += bytesToWrite;
+    blockNumber++;
+  }
+
+  return size;
 }
 
 int LocalFileSystem::unlink(int parentInodeNumber, string name) {
