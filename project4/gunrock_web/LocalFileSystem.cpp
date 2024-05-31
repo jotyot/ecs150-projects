@@ -9,6 +9,8 @@
 
 using namespace std;
 
+void updateInode(LocalFileSystem *fs, int inodeNumber, inode_t inode);
+int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int size);
 
 LocalFileSystem::LocalFileSystem(Disk *disk) {
   this->disk = disk;
@@ -79,7 +81,69 @@ int LocalFileSystem::read(int inodeNumber, void *buffer, int size) {
 }
 
 int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
-  return 0;
+  inode_t parentInode;
+
+  // intial argument check
+  int ret = stat(parentInodeNumber, &parentInode);
+  if (ret != 0) {
+    return ret;
+  }
+  if (parentInode.type != UFS_DIRECTORY) {
+    return EINVALIDINODE;
+  }
+  if (name.size() > DIR_ENT_NAME_SIZE) {
+    return EINVALIDNAME;
+  }
+
+  // name check
+  dir_ent_t entries[parentInode.size / sizeof(dir_ent_t) + 1];
+  read(parentInodeNumber, &entries, parentInode.size);
+  for (dir_ent_t entry : entries) {
+    if (strcmp(entry.name, name.c_str()) == 0) {
+      if (entry.inum < 0) {
+        return EINVALIDINODE;
+      }
+      inode_t existingInode;
+      ret = stat(entry.inum, &existingInode);
+      if (ret != 0) {
+        return ret;
+      }
+      if (existingInode.type != type) {
+        return EINVALIDTYPE;
+      }
+      return entry.inum;
+    }
+  }
+
+  // find the first 0 in the inode bitmap
+  int newInodeNumber = claimFreeInode(this);
+  if (newInodeNumber == -1) {
+    return ENOTENOUGHSPACE;
+  }
+
+  // update the parent directory
+  dir_ent_t newEntry;
+  strcpy(newEntry.name, name.c_str());
+  newEntry.inum = newInodeNumber;
+  entries[parentInode.size / sizeof(dir_ent_t)] = newEntry;
+
+  // update the parent inode
+  parentInode.size += sizeof(dir_ent_t);
+  updateInode(this, parentInodeNumber, parentInode);
+  
+  writeGeneral(this, parentInodeNumber, &entries, parentInode.size + sizeof(dir_ent_t));
+
+  if (type == UFS_DIRECTORY) {
+    inode_t newInode;
+    newInode.type = UFS_DIRECTORY;
+    newInode.size = 0;
+    for (int i = 0; i < DIRECT_PTRS; i++) {
+      newInode.direct[i] = -1;
+    }
+    updateInode(this, newInodeNumber, newInode);
+  }
+
+  return newInodeNumber;
 }
 
 int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
@@ -88,26 +152,22 @@ int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
   if (ret != 0) {
     return ret;
   }
-  if (size < 0 || size > MAX_FILE_SIZE) {
-    return EINVALIDSIZE;
-  }
   if (inode.type != UFS_REGULAR_FILE) {
     return EINVALIDTYPE;
   }
 
-  int bytesWritten = 0;
-  int blockNumber = 0;
-  char *blockBuffer = new char[UFS_BLOCK_SIZE];
-
-  while (bytesWritten < size) {
-    int bytesToWrite = min(size - bytesWritten, UFS_BLOCK_SIZE);
-    memcpy(blockBuffer, (char *)buffer + bytesWritten, bytesToWrite);
-    disk->writeBlock(inode.direct[blockNumber], blockBuffer);
-    bytesWritten += bytesToWrite;
-    blockNumber++;
+  if (size < 0 || size > MAX_FILE_SIZE) {
+    return EINVALIDSIZE;
   }
 
-  return size;
+  super_t super;
+  readSuperBlock(&super);
+
+  if (!diskHasSpace(&super, 0, inode.size - size, 0)) {
+    return ENOTENOUGHSPACE;
+  }
+
+  return writeGeneral(this, inodeNumber, buffer, size);
 }
 
 int LocalFileSystem::unlink(int parentInodeNumber, string name) {
@@ -122,10 +182,143 @@ void LocalFileSystem::readInodeBitmap(super_t *super, unsigned char *inodeBitmap
   }
 }
 
+void LocalFileSystem::writeInodeBitmap(super_t *super, unsigned char *inodeBitmap) {
+  for (int i = 0; i < super->inode_bitmap_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    memcpy(buffer, inodeBitmap + i * UFS_BLOCK_SIZE, UFS_BLOCK_SIZE);
+    disk->writeBlock(super->inode_bitmap_addr + i, buffer);
+  }
+}
+
 void LocalFileSystem::readDataBitmap(super_t *super, unsigned char *dataBitmap) {
   for (int i = 0; i < super->data_bitmap_len; i++) {
     char *buffer = new char[UFS_BLOCK_SIZE];
     disk->readBlock(super->data_bitmap_addr + i, buffer);
     memcpy(dataBitmap + i * UFS_BLOCK_SIZE, buffer, UFS_BLOCK_SIZE);
   }
+}
+
+void LocalFileSystem::writeDataBitmap(super_t *super, unsigned char *dataBitmap) {
+  for (int i = 0; i < super->data_bitmap_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    memcpy(buffer, dataBitmap + i * UFS_BLOCK_SIZE, UFS_BLOCK_SIZE);
+    disk->writeBlock(super->data_bitmap_addr + i, buffer);
+  }
+}
+
+void LocalFileSystem::readInodeRegion(super_t *super, inode_t *inodes) { 
+  for (int i = 0; i < super->inode_region_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    disk->readBlock(super->inode_region_addr + i, buffer);
+    memcpy(inodes + i * (UFS_BLOCK_SIZE / sizeof(inode_t)), buffer, UFS_BLOCK_SIZE);
+  }
+}
+
+void LocalFileSystem::writeInodeRegion(super_t *super, inode_t *inodes) {
+  for (int i = 0; i < super->inode_region_len; i++) {
+    char *buffer = new char[UFS_BLOCK_SIZE];
+    memcpy(buffer, inodes + i * (UFS_BLOCK_SIZE / sizeof(inode_t)), UFS_BLOCK_SIZE);
+    disk->writeBlock(super->inode_region_addr + i, buffer);
+  }
+}
+
+bool LocalFileSystem::diskHasSpace(super_t *super, int numInodesNeeded, int numDataBytesNeeded, int numDataBlocksNeeded) {
+  unsigned char inodeBitmap[super->inode_bitmap_len * UFS_BLOCK_SIZE];
+  readInodeBitmap(super, inodeBitmap);
+  int numInodes = 0;
+  for (int i = 0; i < super->num_inodes; i++) {
+    if ((inodeBitmap[i / 8] & (1 << (i % 8))) == 0) {
+      numInodes++;
+    }
+  }
+  if (numInodes < numInodesNeeded) {
+    return false;
+  }
+
+  unsigned char dataBitmap[super->data_bitmap_len * UFS_BLOCK_SIZE];
+  readDataBitmap(super, dataBitmap);
+  int numDataBlocks = 0;
+  for (int i = 0; i < super->num_data; i++) {
+    if ((dataBitmap[i / 8] & (1 << (i % 8))) == 0) {
+      numDataBlocks++;
+    }
+  }
+  if (numDataBlocks < ((numDataBytesNeeded + UFS_BLOCK_SIZE - 1) / UFS_BLOCK_SIZE) + numDataBlocksNeeded) {
+    return false;
+  }
+
+  return true;
+}
+
+// replaces an inode in the inode region
+void updateInode(LocalFileSystem *fs, int inodeNumber, inode_t inode) {
+  super_t super;
+  fs->readSuperBlock(&super);
+  inode_t inodes[UFS_BLOCK_SIZE * super.inode_region_len / sizeof(inode_t)];
+  fs->readInodeRegion(&super, inodes);
+  inodes[inodeNumber] = inode;
+  fs->writeInodeRegion(&super, inodes);
+}
+
+int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int size) {
+  inode_t inode;
+  int ret = fs->stat(inodeNumber, &inode);
+  if (ret != 0) {
+    return ret;
+  }
+
+  int bytesWritten = 0;
+  int blockNumber = 0;
+  char *blockBuffer = new char[UFS_BLOCK_SIZE];
+
+  while (bytesWritten < size) {
+    int bytesToWrite = min(size - bytesWritten, UFS_BLOCK_SIZE);
+    memcpy(blockBuffer, (char *)buffer + bytesWritten, bytesToWrite);
+
+    int blockAddr = inode.direct[blockNumber];
+    if (blockAddr == -1) {
+      int freeDataBlock = claimFreeDataBlock(fs);
+      if (freeDataBlock == -1) {
+        return ENOTENOUGHSPACE;
+      }
+      inode.direct[blockNumber] = freeDataBlock;
+      updateInode(fs, inodeNumber, inode);
+    }
+
+    fs->disk->writeBlock(inode.direct[blockNumber], blockBuffer);
+    bytesWritten += bytesToWrite;
+    blockNumber++;
+  }
+
+  return size;
+}
+
+int claimFreeInode(LocalFileSystem *fs) {
+  super_t super;
+  fs->readSuperBlock(&super);
+  unsigned char inodeBitmap[super.inode_bitmap_len * UFS_BLOCK_SIZE];
+  fs->readInodeBitmap(&super, inodeBitmap);
+  for (int i = 0; i < super.num_inodes; i++) {
+    if ((inodeBitmap[i / 8] & (1 << (i % 8))) == 0) {
+      inodeBitmap[i / 8] |= (1 << (i % 8));
+      fs->writeInodeBitmap(&super, inodeBitmap);
+      return i;
+    }
+  }
+  return -1;
+}
+
+int claimFreeDataBlock(LocalFileSystem *fs) {
+  super_t super;
+  fs->readSuperBlock(&super);
+  unsigned char dataBitmap[super.data_bitmap_len * UFS_BLOCK_SIZE];
+  fs->readDataBitmap(&super, dataBitmap);
+  for (int i = 0; i < super.num_data; i++) {
+    if ((dataBitmap[i / 8] & (1 << (i % 8))) == 0) {
+      dataBitmap[i / 8] |= (1 << (i % 8));
+      fs->writeDataBitmap(&super, dataBitmap);
+      return i;
+    }
+  }
+  return -1;
 }
