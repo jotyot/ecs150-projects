@@ -57,6 +57,9 @@ int LocalFileSystem::stat(int inodeNumber, inode_t *inode) {
 }
 
 int LocalFileSystem::read(int inodeNumber, void *buffer, int size) {
+  super_t super;
+  readSuperBlock(&super);
+
   inode_t inode;
   int ret = stat(inodeNumber, &inode);
   if (ret != 0) {
@@ -152,7 +155,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     if (newBlock == -1) {
       return ENOTENOUGHSPACE;
     }
-    writeGeneral(this, newInodeNumber, &newEntries, newInode.size);
+    writeGeneral(this, newInodeNumber, &newEntries, newInode.size); // the problematic line
 
     updateInode(this, newInodeNumber, newInode);
 
@@ -169,7 +172,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     newInode.direct[0] = newBlock;
 
     updateInode(this, newInodeNumber, newInode);
-    
+
   } else {
     return EINVALIDTYPE;
   }
@@ -348,7 +351,7 @@ int claimFreeDataBlock(LocalFileSystem *fs) {
     if ((dataBitmap[i / 8] & (1 << (i % 8))) == 0) {
       dataBitmap[i / 8] |= (1 << (i % 8));
       fs->writeDataBitmap(&super, dataBitmap);
-      return i;
+      return i + super.data_region_addr;
     }
   }
   return -1;
