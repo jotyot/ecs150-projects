@@ -11,6 +11,8 @@ using namespace std;
 
 void updateInode(LocalFileSystem *fs, int inodeNumber, inode_t inode);
 int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int size);
+int claimFreeInode(LocalFileSystem *fs);
+int claimFreeDataBlock(LocalFileSystem *fs);
 
 LocalFileSystem::LocalFileSystem(Disk *disk) {
   this->disk = disk;
@@ -121,7 +123,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     return ENOTENOUGHSPACE;
   }
 
-  // update the parent directory
+  // add new entry to parent directory entries
   dir_ent_t newEntry;
   strcpy(newEntry.name, name.c_str());
   newEntry.inum = newInodeNumber;
@@ -136,11 +138,40 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   if (type == UFS_DIRECTORY) {
     inode_t newInode;
     newInode.type = UFS_DIRECTORY;
-    newInode.size = 0;
-    for (int i = 0; i < DIRECT_PTRS; i++) {
-      newInode.direct[i] = -1;
+    newInode.size = 2 * sizeof(dir_ent_t);
+
+    // add . and .. entries
+    dir_ent_t newEntries[2];
+    strcpy(newEntries[0].name, ".");
+    newEntries[0].inum = newInodeNumber;
+    strcpy(newEntries[1].name, "..");
+    newEntries[1].inum = parentInodeNumber;
+
+    // write entries into a new data block
+    int newBlock = claimFreeDataBlock(this);
+    if (newBlock == -1) {
+      return ENOTENOUGHSPACE;
     }
+    writeGeneral(this, newInodeNumber, &newEntries, newInode.size);
+
     updateInode(this, newInodeNumber, newInode);
+
+  } else if (type == UFS_REGULAR_FILE) {
+    inode_t newInode;
+    newInode.type = UFS_REGULAR_FILE;
+    newInode.size = 0;
+
+    int newBlock = claimFreeDataBlock(this);
+    if (newBlock == -1) {
+      return ENOTENOUGHSPACE;
+    }
+
+    newInode.direct[0] = newBlock;
+
+    updateInode(this, newInodeNumber, newInode);
+    
+  } else {
+    return EINVALIDTYPE;
   }
 
   return newInodeNumber;
