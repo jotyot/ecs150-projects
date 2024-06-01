@@ -29,24 +29,10 @@ int main(int argc, char *argv[]) {
   fs->read(inodeNumber, buffer, inode.size);
 
   cout << "File blocks" << endl;
-  if (numBlocks == 0 && allocated(fs, inodeNumber)) {
-    cout << inode.direct[0] << endl;
-  }
   for (int i = 0; i < numBlocks; i++) {
     cout << inode.direct[i] << endl;
   }
   cout << endl;
   cout << "File data" << endl;
   cout.write(buffer, inode.size);
-}
-
-bool allocated(LocalFileSystem *fs, int inodeNumber) {
-  super_t super;
-  fs->readSuperBlock(&super);
-
-  int block = inodeNumber / (UFS_BLOCK_SIZE * 8);
-  unsigned char *bitmap = new unsigned char[super.inode_bitmap_len * UFS_BLOCK_SIZE];
-  fs->readInodeBitmap(&super, bitmap);
-
-  return bitmap[block] & (1 << (inodeNumber % (UFS_BLOCK_SIZE * 8)));
 }

@@ -25,20 +25,10 @@ int main(int argc, char *argv[]) {
   inode_t inode;
   fs->stat(newInode, &inode);
 
-  cout << "inode number: " << newInode << endl;
+  cout << "inode type: " << (inode.type ? "file" : "directory") << endl;
+  cout << "inode size: " << inode.size << endl;
   cout << "datablock: " << inode.direct[0] << endl;
 
-  fs->stat(0, &inode);
-  cout << "root direct: " << inode.direct[0] << endl;
-
-  // fs->stat(1, &inode);
-  // cout << "a/ direct: " << inode.direct[0] << endl;  
-
-  // fs->stat(2, &inode);
-  // cout << "b/ direct: " << inode.direct[0] << endl;
-
-  // fs->stat(3, &inode);
-  // cout << "c.txt direct: " << inode.direct[0] << endl;
-  
   return 0;
 }
+

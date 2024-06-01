@@ -139,9 +139,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   writeGeneral(this, parentInodeNumber, &entries, parentInode.size + sizeof(dir_ent_t));
 
   if (type == UFS_DIRECTORY) {
-    inode_t newInode;
-    newInode.type = UFS_DIRECTORY;
-    newInode.size = 2 * sizeof(dir_ent_t);
+    
 
     // add . and .. entries
     dir_ent_t newEntries[2];
@@ -155,7 +153,13 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     if (newBlock == -1) {
       return ENOTENOUGHSPACE;
     }
-    writeGeneral(this, newInodeNumber, &newEntries, newInode.size); // the problematic line
+
+    inode_t newInode;
+
+    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t));
+
+    stat(newInodeNumber, &newInode);
+    newInode.type = UFS_DIRECTORY;
 
     updateInode(this, newInodeNumber, newInode);
 
@@ -163,13 +167,6 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     inode_t newInode;
     newInode.type = UFS_REGULAR_FILE;
     newInode.size = 0;
-
-    int newBlock = claimFreeDataBlock(this);
-    if (newBlock == -1) {
-      return ENOTENOUGHSPACE;
-    }
-
-    newInode.direct[0] = newBlock;
 
     updateInode(this, newInodeNumber, newInode);
 
@@ -301,6 +298,8 @@ int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int s
     return ret;
   }
 
+  int blocksAllocated = (inode.size + UFS_BLOCK_SIZE - 1) / UFS_BLOCK_SIZE;
+
   int bytesWritten = 0;
   int blockNumber = 0;
   char *blockBuffer = new char[UFS_BLOCK_SIZE];
@@ -309,20 +308,21 @@ int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int s
     int bytesToWrite = min(size - bytesWritten, UFS_BLOCK_SIZE);
     memcpy(blockBuffer, (char *)buffer + bytesWritten, bytesToWrite);
 
-    int blockAddr = inode.direct[blockNumber];
-    if (blockAddr == -1) {
+    if (blockNumber >= blocksAllocated) {
       int freeDataBlock = claimFreeDataBlock(fs);
       if (freeDataBlock == -1) {
         return ENOTENOUGHSPACE;
       }
       inode.direct[blockNumber] = freeDataBlock;
-      updateInode(fs, inodeNumber, inode);
     }
 
     fs->disk->writeBlock(inode.direct[blockNumber], blockBuffer);
     bytesWritten += bytesToWrite;
     blockNumber++;
   }
+
+  inode.size = size;
+  updateInode(fs, inodeNumber, inode);
 
   return size;
 }
