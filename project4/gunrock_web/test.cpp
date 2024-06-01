@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
   int newInode = fs->create(UFS_ROOT_DIRECTORY_INODE_NUMBER, UFS_DIRECTORY, "a");
 
-  // fs->create(newInode, UFS_DIRECTORY, "b");
+  fs->create(newInode, UFS_DIRECTORY, "b");
 
   inode_t inode;
   fs->stat(newInode, &inode);

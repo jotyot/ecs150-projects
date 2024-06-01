@@ -156,10 +156,11 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
 
     inode_t newInode;
 
-    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t));
+    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t)); // the problematic line 
 
     stat(newInodeNumber, &newInode);
     newInode.type = UFS_DIRECTORY;
+    newInode.size = 2 * sizeof(dir_ent_t);
 
     updateInode(this, newInodeNumber, newInode);
 
@@ -314,15 +315,14 @@ int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int s
         return ENOTENOUGHSPACE;
       }
       inode.direct[blockNumber] = freeDataBlock;
+      updateInode(fs, inodeNumber, inode);
+      fs->stat(inodeNumber, &inode);
     }
 
     fs->disk->writeBlock(inode.direct[blockNumber], blockBuffer);
     bytesWritten += bytesToWrite;
     blockNumber++;
   }
-
-  inode.size = size;
-  updateInode(fs, inodeNumber, inode);
 
   return size;
 }
