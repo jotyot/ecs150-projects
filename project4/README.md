@@ -153,15 +153,13 @@ fixed-length field of size 28 bytes; the inode number is just an
 integer (4 bytes). When a directory is created, it should contain two
 entries: the name `.` (dot), which refers to this new directory's
 inode number, and `..` (dot-dot), which refers to the parent
-directory's inode number. For directory entries that are not yet in
-use (in an allocated 4-KB directory block), the inode number should be
-set to -1. This way, utilities can scan through the entries to check
-if they are valid.
+directory's inode number. For the root directory in a file system,
+both `.` and `..` refer to the root directory.
 
 When your server is started, it is passed the name of the file system
 image file. The image is created by a tool we provide, called `mkfs`.
 It is pretty self-explanatory and can be found
-[here](mkfs.c).
+[here](gunrock_web/mkfs.c).
 
 When accessing the files on an image, your server should read in the
 superblock, bitmaps, and inode table from disk as needed. When writing
@@ -178,7 +176,7 @@ Importantly, you cannot change the file-system on-disk format.
 For more detailed documentation on the local file system specification,
 please see [LocalFileSystem.h](gunrock_web/include/LocalFileSystem.h)
 and the stub [LocalFileSystem.cpp](gunrock_web/LocalFileSystem.cpp). Also,
-please see [Disk.h](gunrock_web/Disk.h) for the interface for accessing
+please see [Disk.h](gunrock_web/include/Disk.h) for the interface for accessing
 the disk.
 
 ### Bitmaps for block allocation
