@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   fs->stat(inodeNumber, &inode);
 
   int numBlocks = (inode.size + UFS_BLOCK_SIZE - 1) / UFS_BLOCK_SIZE;
-  char buffer[UFS_BLOCK_SIZE * numBlocks];
+  char* buffer = new char[inode.size];
   fs->read(inodeNumber, buffer, inode.size);
 
   cout << "File blocks" << endl;
@@ -34,5 +34,5 @@ int main(int argc, char *argv[]) {
   }
   cout << endl;
   cout << "File data" << endl;
-  cout.write(buffer, inode.size);
+  cout << buffer;
 }

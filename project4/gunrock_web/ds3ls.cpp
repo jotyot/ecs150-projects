@@ -43,6 +43,10 @@ int main(int argc, char *argv[]) {
       dir_ent_t entries[inode.size / sizeof(dir_ent_t)];
       fs->read(inodeNumber, &entries, inode.size);
 
+      sort(entries + 2, entries + (inode.size / sizeof(dir_ent_t)), [](dir_ent_t a, dir_ent_t b) {
+        return strcmp(a.name, b.name) > 0;
+      });
+
       for (dir_ent_t entry : entries) {
         inode_t entryInode;
         fs->stat(entry.inum, &entryInode);

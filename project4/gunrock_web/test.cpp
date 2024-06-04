@@ -20,15 +20,16 @@ int main(int argc, char *argv[]) {
 
   int newInode = fs->create(UFS_ROOT_DIRECTORY_INODE_NUMBER, UFS_DIRECTORY, "a");
 
-  fs->create(newInode, UFS_DIRECTORY, "b");
+  int bInode = fs->create(newInode, UFS_DIRECTORY, "b");
 
-  inode_t inode;
-  fs->stat(newInode, &inode);
+  int fileInode = fs->create(bInode, UFS_REGULAR_FILE, "c.txt");
 
-  cout << "inode type: " << (inode.type ? "file" : "directory") << endl;
-  cout << "inode size: " << inode.size << endl;
-  cout << "datablock: " << inode.direct[0] << endl;
+  char buffer[100];
+  strcpy(buffer, "file contents");
+  fs->write(fileInode, buffer, strlen(buffer));
 
+  cout << fs->lookup(bInode, "c.txt") << endl;
+  
   return 0;
 }
 
