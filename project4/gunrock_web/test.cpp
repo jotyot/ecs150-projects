@@ -23,12 +23,13 @@ int main(int argc, char *argv[]) {
   int bInode = fs->create(newInode, UFS_DIRECTORY, "b");
 
   int fileInode = fs->create(bInode, UFS_REGULAR_FILE, "c.txt");
+  fs->create(bInode, UFS_REGULAR_FILE, "d.txt");
 
   char buffer[100];
   strcpy(buffer, "file contents");
   fs->write(fileInode, buffer, strlen(buffer));
 
-  cout << fs->lookup(bInode, "a.txt") << endl;
+  cout << fs->lookup(bInode, "d.txt") << endl;
 
   return 0;
 }

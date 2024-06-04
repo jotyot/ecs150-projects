@@ -37,7 +37,7 @@ int LocalFileSystem::lookup(int parentInodeNumber, string name) {
   dir_ent_t* entries = new dir_ent_t[inode.size / sizeof(dir_ent_t)];
   read(parentInodeNumber, entries, inode.size);
   for (unsigned int i = 0; i < inode.size / sizeof(dir_ent_t); i++) {
-    if (strcmp(entries[i].name, name.c_str()) == 0) {
+    if (name.compare(entries[i].name) == 0) {
       return entries[i].inum;
     }
   }
@@ -50,9 +50,9 @@ int LocalFileSystem::stat(int inodeNumber, inode_t *inode) {
   if (inodeNumber < 0 || inodeNumber >= super.num_inodes) {
     return EINVALIDINODE;
   }
-  // if (!allocatedInode(this, inodeNumber)) {
-    // return ENOTALLOCATED;
-  // }
+  if (!allocatedInode(this, inodeNumber)) {
+    return ENOTALLOCATED;
+  }
   char* buffer = new char[UFS_BLOCK_SIZE];
   int blockNumber = inodeNumber / (UFS_BLOCK_SIZE / sizeof(inode_t));
   disk->readBlock(super.inode_region_addr + blockNumber, buffer);
@@ -111,30 +111,30 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   }
 
   // name check
-  dir_ent_t* entries = new dir_ent_t[parentInode.size / sizeof(dir_ent_t) + 1];
-  read(parentInodeNumber, entries, parentInode.size);
-  for (unsigned int i = 0; i < parentInode.size / sizeof(dir_ent_t) + 1; i++) {
-    dir_ent_t entry = entries[i];
-    if (strcmp(entry.name, name.c_str()) == 0) {
-      inode_t existingInode;
-      ret = stat(entry.inum, &existingInode);
-      if (ret != 0) {
-        return ret;
-      }
-      if (existingInode.type != type) {
-        return EINVALIDTYPE;
-      }
-      return entry.inum;
+  int existingInodeNumber = lookup(parentInodeNumber, name);
+  if (existingInodeNumber != ENOTFOUND) {
+    inode_t existingInode;
+    stat(existingInodeNumber, &existingInode);
+    if (existingInode.type == type) {
+      return existingInodeNumber;
+    } else {
+      return EINVALIDTYPE;
     }
+  }
+
+  super_t super;
+  readSuperBlock(&super);
+  if (!diskHasSpace(&super, 1, 0, 0)) {
+    return ENOTENOUGHSPACE;
   }
 
   // find the first 0 in the inode bitmap
   int newInodeNumber = claimFreeInode(this);
-  if (newInodeNumber == -1) {
-    return ENOTENOUGHSPACE;
-  }
 
   // add new entry to parent directory entries
+  dir_ent_t* entries = new dir_ent_t[parentInode.size / sizeof(dir_ent_t) + 1];
+  read(parentInodeNumber, entries, parentInode.size);
+
   dir_ent_t newEntry;
   strcpy(newEntry.name, name.c_str());
   newEntry.inum = newInodeNumber;
@@ -144,9 +144,13 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   parentInode.size += sizeof(dir_ent_t);
   updateInode(this, parentInodeNumber, parentInode);
   
-  writeGeneral(this, parentInodeNumber, &entries, parentInode.size + sizeof(dir_ent_t));
+  writeGeneral(this, parentInodeNumber, entries, parentInode.size + sizeof(dir_ent_t));
 
   if (type == UFS_DIRECTORY) {
+    if (!diskHasSpace(&super, 0, 2 * sizeof(dir_ent_t), 0)) {
+      return ENOTENOUGHSPACE;
+    }
+
     // add . and .. entries
     dir_ent_t newEntries[2];
     strcpy(newEntries[0].name, ".");
@@ -162,7 +166,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
 
     inode_t newInode;
 
-    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t)); // the problematic line 
+    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t));
 
     stat(newInodeNumber, &newInode);
     newInode.type = UFS_DIRECTORY;
@@ -192,7 +196,7 @@ int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
   }
 
   if (size < 0 || size > MAX_FILE_SIZE) {
-    // return EINVALIDSIZE;
+    return EINVALIDSIZE;
   }
 
   super_t super;
