@@ -53,7 +53,7 @@ int LocalFileSystem::stat(int inodeNumber, inode_t *inode) {
   // if (!allocatedInode(this, inodeNumber)) {
     // return ENOTALLOCATED;
   // }
-  char *buffer = new char[UFS_BLOCK_SIZE];
+  char* buffer = new char[UFS_BLOCK_SIZE];
   int blockNumber = inodeNumber / (UFS_BLOCK_SIZE / sizeof(inode_t));
   disk->readBlock(super.inode_region_addr + blockNumber, buffer);
   memcpy(inode, buffer + inodeNumber * sizeof(inode_t), sizeof(inode_t));
@@ -111,9 +111,10 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   }
 
   // name check
-  dir_ent_t entries[parentInode.size / sizeof(dir_ent_t) + 1];
-  read(parentInodeNumber, &entries, parentInode.size);
-  for (dir_ent_t entry : entries) {
+  dir_ent_t* entries = new dir_ent_t[parentInode.size / sizeof(dir_ent_t) + 1];
+  read(parentInodeNumber, entries, parentInode.size);
+  for (unsigned int i = 0; i < parentInode.size / sizeof(dir_ent_t) + 1; i++) {
+    dir_ent_t entry = entries[i];
     if (strcmp(entry.name, name.c_str()) == 0) {
       inode_t existingInode;
       ret = stat(entry.inum, &existingInode);
@@ -146,8 +147,6 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   writeGeneral(this, parentInodeNumber, &entries, parentInode.size + sizeof(dir_ent_t));
 
   if (type == UFS_DIRECTORY) {
-    
-
     // add . and .. entries
     dir_ent_t newEntries[2];
     strcpy(newEntries[0].name, ".");

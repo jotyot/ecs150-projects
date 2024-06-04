@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
   strcpy(buffer, "file contents");
   fs->write(fileInode, buffer, strlen(buffer));
 
-  cout << fs->lookup(bInode, "c.txt") << endl;
-  
+  cout << fs->lookup(bInode, "a.txt") << endl;
+
   return 0;
 }
 
