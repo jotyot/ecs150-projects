@@ -36,6 +36,8 @@ int main(int argc, char *argv[]) {
   strcpy(buffer, "hello world\n");
   fs->write(fileInode, buffer, strlen(buffer));
 
+  fs->unlink(bInum, "d.txt");
+
   return 0;
 }
 

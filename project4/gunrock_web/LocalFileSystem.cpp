@@ -36,11 +36,11 @@ int LocalFileSystem::lookup(int parentInodeNumber, string name) {
   if (inode.type != UFS_DIRECTORY) {
     return -EINVALIDINODE;
   }
-  dir_ent_t* entries = new dir_ent_t[inode.size / sizeof(dir_ent_t)];
-  read(parentInodeNumber, entries, inode.size);
-  for (unsigned int i = 0; i < inode.size / sizeof(dir_ent_t); i++) {
-    if (name.compare(entries[i].name) == 0) {
-      return entries[i].inum;
+  dir_ent_t entries[inode.size / sizeof(dir_ent_t)];
+  read(parentInodeNumber, &entries, inode.size);
+  for (dir_ent_t entry : entries) {
+    if (name.compare(entry.name) == 0) {
+      return entry.inum;
     }
   }
   return -ENOTFOUND;
@@ -78,9 +78,9 @@ int LocalFileSystem::read(int inodeNumber, void *buffer, int size) {
 
   int bytesRead = 0;
   int blockNumber = 0;
+  char *blockBuffer = new char[UFS_BLOCK_SIZE];
 
   while (bytesRead < size) {
-    char *blockBuffer = new char[UFS_BLOCK_SIZE];
     disk->readBlock(inode.direct[blockNumber], blockBuffer);
 
     int bytesToRead = min(size - bytesRead, UFS_BLOCK_SIZE);
@@ -194,27 +194,59 @@ int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
 }
 
 int LocalFileSystem::unlink(int parentInodeNumber, string name) {
-  // inode_t parentInode;
-  // int ret = stat(parentInodeNumber, &parentInode);
-  // if (ret != 0) {
-  //   return ret;
-  // }
+  inode_t parentInode;
+  int ret = stat(parentInodeNumber, &parentInode);
+  if (ret != 0) {
+    return ret;
+  }
 
-  // if (name.size() > DIR_ENT_NAME_SIZE) {
-  //   return -EINVALIDNAME;
-  // }
+  if (name.size() > DIR_ENT_NAME_SIZE) {
+    return -EINVALIDNAME;
+  }
 
-  // dir_ent_t* entries = new dir_ent_t[inode.size / sizeof(dir_ent_t)];
-  // read(parentInodeNumber, entries, inode.size);
-  // for (unsigned int i = 0; i < inode.size / sizeof(dir_ent_t); i++) {
-  //   if (name.compare(entries[i].name) == 0) {
-  //     return entries[i].inum;
-  //   }
-  // }
-  // return -ENOTFOUND;
+  if (name.compare(".") == 0 || name.compare("..") == 0) {
+    return -EUNLINKNOTALLOWED;
+  }
 
+  dir_ent_t entries[parentInode.size / sizeof(dir_ent_t)];
+  dir_ent_t entryToDelete = {"", -1};
+  read(parentInodeNumber, &entries, parentInode.size);
+  for (dir_ent_t entry : entries) {
+    if (name.compare(entry.name) == 0) {
+      entryToDelete = entry;
+      break;
+    }
+  }
+  if (entryToDelete.inum == -1) {
+    return 0;
+  }
 
+  inode_t inodeToDelete;
+  ret = stat(entryToDelete.inum, &inodeToDelete);
 
+  if (inodeToDelete.type == UFS_DIRECTORY && inodeToDelete.size > 2 * (int)sizeof(dir_ent_t)) {
+    return -EDIRNOTEMPTY;
+  }
+
+  // remove entry from parent directory
+  vector<dir_ent_t> newEntries;
+  for (dir_ent_t entry : entries) {
+    if (entry.inum != entryToDelete.inum) {
+      newEntries.push_back(entry);
+    }
+  }
+
+  ret = writeGeneral(this, parentInodeNumber, newEntries.data(), parentInode.size - sizeof(dir_ent_t));
+  if (ret == -ENOTENOUGHSPACE) {
+    return ret;
+  }
+
+  // deallocate inode and data blocks
+  deallocateInode(this, entryToDelete.inum);
+  int numBlocks = (inodeToDelete.size + UFS_BLOCK_SIZE - 1) / UFS_BLOCK_SIZE;
+  for (int i = 0; i < numBlocks; i++) {
+    deallocateDataBlock(this, inodeToDelete.direct[i]);
+  }
 
   return 0;
 }
