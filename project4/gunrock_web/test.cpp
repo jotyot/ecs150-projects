@@ -23,23 +23,18 @@ int main(int argc, char *argv[]) {
   ifstream testFile("test.txt");
   string testContents((istreambuf_iterator<char>(testFile)), istreambuf_iterator<char>());
 
-  int newInode = fs->create(UFS_ROOT_DIRECTORY_INODE_NUMBER, UFS_DIRECTORY, "a");
+  int newInum = fs->create(UFS_ROOT_DIRECTORY_INODE_NUMBER, UFS_DIRECTORY, "a");
 
-  int bInode = fs->create(newInode, UFS_DIRECTORY, "b");
+  int bInum = fs->create(newInum, UFS_DIRECTORY, "b");
 
-  int fileInode = fs->create(bInode, UFS_REGULAR_FILE, "c.txt");
-  fs->create(bInode, UFS_REGULAR_FILE, "d.txt");
+  int fileInode = fs->create(bInum, UFS_REGULAR_FILE, "c.txt");
+  fs->create(bInum, UFS_REGULAR_FILE, "d.txt");
 
   fs->write(fileInode, testContents.c_str(), strlen(testContents.c_str()));
 
-  // char buffer[100];
-  // strcpy(buffer, "hello world\n");
-  // fs->write(fileInode, buffer, strlen(buffer));
-
-  inode_t inode; 
-  fs->stat(fileInode, &inode);
-
-  cout << inode.size << endl;
+  char buffer[100];
+  strcpy(buffer, "hello world\n");
+  fs->write(fileInode, buffer, strlen(buffer));
 
   return 0;
 }

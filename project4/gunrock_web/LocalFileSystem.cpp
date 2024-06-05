@@ -101,16 +101,13 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   if (ret != 0) {
     return ret;
   }
-  if (parentInode.type != UFS_DIRECTORY) {
-    return -EINVALIDTYPE;
-  }
   if (name.size() > DIR_ENT_NAME_SIZE) {
     return -EINVALIDNAME;
   }
 
   // name check
   int existingInodeNumber = lookup(parentInodeNumber, name);
-  if (existingInodeNumber != ENOTFOUND) {
+  if (existingInodeNumber != -ENOTFOUND) {
     inode_t existingInode;
     ret = stat(existingInodeNumber, &existingInode);
     if (ret != 0) {
@@ -141,18 +138,15 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
   newEntry.inum = newInodeNumber;
   entries[parentInode.size / sizeof(dir_ent_t)] = newEntry;
 
-  // update the parent inode
-  parentInode.size += sizeof(dir_ent_t);
-  updateInode(this, parentInodeNumber, parentInode);
-  
+  // update the parent inode  
   ret = writeGeneral(this, parentInodeNumber, entries, parentInode.size + sizeof(dir_ent_t));
-  if (ret != parentInode.size + (int)sizeof(dir_ent_t)) {
+  if (ret == -ENOTENOUGHSPACE) {
     return ret;
   }
 
   if (type == UFS_DIRECTORY) {
     // add . and .. entries
-    dir_ent_t newEntries[2];
+    dir_ent_t *newEntries = new dir_ent_t[2];
     strcpy(newEntries[0].name, ".");
     newEntries[0].inum = newInodeNumber;
     strcpy(newEntries[1].name, "..");
@@ -163,7 +157,7 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
     }
 
     inode_t newInode;
-    writeGeneral(this, newInodeNumber, &newEntries, 2 * sizeof(dir_ent_t));
+    writeGeneral(this, newInodeNumber, newEntries, 2 * sizeof(dir_ent_t));
 
     stat(newInodeNumber, &newInode);
     newInode.type = UFS_DIRECTORY;
@@ -200,6 +194,28 @@ int LocalFileSystem::write(int inodeNumber, const void *buffer, int size) {
 }
 
 int LocalFileSystem::unlink(int parentInodeNumber, string name) {
+  // inode_t parentInode;
+  // int ret = stat(parentInodeNumber, &parentInode);
+  // if (ret != 0) {
+  //   return ret;
+  // }
+
+  // if (name.size() > DIR_ENT_NAME_SIZE) {
+  //   return -EINVALIDNAME;
+  // }
+
+  // dir_ent_t* entries = new dir_ent_t[inode.size / sizeof(dir_ent_t)];
+  // read(parentInodeNumber, entries, inode.size);
+  // for (unsigned int i = 0; i < inode.size / sizeof(dir_ent_t); i++) {
+  //   if (name.compare(entries[i].name) == 0) {
+  //     return entries[i].inum;
+  //   }
+  // }
+  // return -ENOTFOUND;
+
+
+
+
   return 0;
 }
 
@@ -288,6 +304,7 @@ void updateInode(LocalFileSystem *fs, int inodeNumber, inode_t inode) {
   fs->writeInodeRegion(&super, inodes);
 }
 
+// returns size on success, -ENOTENOUGHSPACE on failure
 int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int size) {
   super_t super;
   fs->readSuperBlock(&super);
