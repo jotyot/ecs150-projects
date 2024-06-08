@@ -75,23 +75,25 @@ void DistributedFileSystemService::put(HTTPRequest *request, HTTPResponse *respo
 
   fileSystem->disk->beginTransaction();
 
+
+  int type = UFS_DIRECTORY;
   for (unsigned int i = 1; i < pathComponents.size(); i++) {
-    int type = UFS_DIRECTORY;
     if (i == pathComponents.size() - 1) {
       type = UFS_REGULAR_FILE;
     }
 
-    currentInum = fileSystem->create(currentInum, type, pathComponents[i]);
-    if (currentInum < 0) {
+    int nextInum = fileSystem->create(currentInum, type, pathComponents[i]);
+    if (nextInum < 0) {
       fileSystem->disk->rollback();
-      if (currentInum == -ENOTENOUGHSPACE) {
+      if (nextInum == -ENOTENOUGHSPACE) {
         throw ClientError::insufficientStorage();
-      } else if (currentInum == -EINVALIDTYPE) {
+      } else if (nextInum == -EINVALIDTYPE) {
         throw ClientError::conflict();
       } else {
         throw ClientError::badRequest();
       }
     }
+    currentInum = nextInum;
   }
 
   string contents = request->getBody();
