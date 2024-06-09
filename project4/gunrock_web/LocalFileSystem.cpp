@@ -156,7 +156,11 @@ int LocalFileSystem::create(int parentInodeNumber, int type, string name) {
       return -ENOTENOUGHSPACE;
     }
 
+
     inode_t newInode;
+    newInode.size = 0;
+    updateInode(this, newInodeNumber, newInode);
+
     writeGeneral(this, newInodeNumber, newEntries, 2 * sizeof(dir_ent_t));
 
     stat(newInodeNumber, &newInode);
@@ -365,9 +369,11 @@ int writeGeneral(LocalFileSystem *fs, int inodeNumber, const void *buffer, int s
   int blockNumber = 0;
   char *blockBuffer = new char[UFS_BLOCK_SIZE];
 
+
   while (bytesWritten < size) {
     int bytesToWrite = min(size - bytesWritten, UFS_BLOCK_SIZE);
     memcpy(blockBuffer, (char *)buffer + bytesWritten, bytesToWrite);
+
 
     if (blockNumber >= blocksAllocated) {
       int freeDataBlock = claimFreeDataBlock(fs);
